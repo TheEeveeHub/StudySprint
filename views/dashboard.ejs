@@ -1,0 +1,108 @@
+<%- include('partials/header', { title }) %>
+
+<section class="dashboard-header">
+	<div>
+		<h1>Your Study Dashboard</h1>
+		<p class="muted">Track tasks, stay organized, and finish strong.</p>
+	</div>
+</section>
+
+<section class="stats-grid">
+	<div class="card stat-card">
+		<h3>Total Tasks</h3>
+		<p class="stat-number"><%= summary.total %></p>
+	</div>
+	<div class="card stat-card">
+		<h3>Completed</h3>
+		<p class="stat-number"><%= summary.completed %></p>
+	</div>
+	<div class="card stat-card">
+		<h3>Pending</h3>
+		<p class="stat-number"><%= summary.pending %></p>
+	</div>
+	<div class="card stat-card">
+		<h3>Progress</h3>
+		<p class="stat-number"><%= summary.progressPercent %>%</p>
+		<div class="progress-bar">
+			<div class="progress-fill" style="width: <%= summary.progressPercent %>%"></div>
+		</div>
+	</div>
+</section>
+
+<section class="dashboard-grid">
+	<div class="card form-card">
+		<h2>Create Task</h2>
+
+		<% if (validationErrors && validationErrors.length > 0) { %>
+			<div class="error-list">
+				<% validationErrors.forEach((errorItem) => { %>
+					<p><%= errorItem.msg %></p>
+				<% }) %>
+			</div>
+		<% } %>
+
+		<form action="/tasks" method="POST" class="form-grid">
+			<label>
+				<span>Title</span>
+				<input type="text" name="title" value="<%= oldInput.title || '' %>" maxlength="100" required>
+			</label>
+
+			<label>
+				<span>Description</span>
+				<textarea name="description" rows="4" maxlength="500" required><%= oldInput.description || '' %></textarea>
+			</label>
+
+			<label>
+				<span>Due Date</span>
+				<input type="date" name="due_date" value="<%= oldInput.due_date || '' %>" required>
+			</label>
+
+			<button type="submit" class="btn btn-full">Add Task</button>
+		</form>
+	</div>
+
+	<div class="card tasks-card">
+		<div class="tasks-header">
+			<h2>Your Tasks</h2>
+			<div class="filter-buttons">
+				<a href="/dashboard?filter=all" class="filter-btn <%= filter === 'all' ? 'active' : '' %>">All</a>
+				<a href="/dashboard?filter=completed" class="filter-btn <%= filter === 'completed' ? 'active' : '' %>">Completed</a>
+				<a href="/dashboard?filter=pending" class="filter-btn <%= filter === 'pending' ? 'active' : '' %>">Pending</a>
+			</div>
+		</div>
+
+		<% if (tasks.length === 0) { %>
+			<div class="empty-state">
+				<p>No tasks found for this filter yet.</p>
+			</div>
+		<% } else { %>
+			<div class="task-list">
+				<% tasks.forEach((task) => { %>
+					<article class="task-item <%= task.status === 'completed' ? 'task-completed' : '' %>">
+						<div class="task-main">
+							<div class="task-title-row">
+								<h3><%= task.title %></h3>
+								<span class="status-badge <%= task.status %>"><%= task.status %></span>
+							</div>
+							<p><%= task.description %></p>
+							<p class="task-meta">Due: <%= task.due_date %></p>
+						</div>
+						<div class="task-actions">
+							<form action="/tasks/<%= task.id %>/toggle" method="POST">
+								<button type="submit" class="btn btn-small">
+									<%= task.status === 'completed' ? 'Mark Pending' : 'Mark Complete' %>
+								</button>
+							</form>
+							<a href="/tasks/<%= task.id %>/edit" class="btn btn-secondary btn-small">Edit</a>
+							<form action="/tasks/<%= task.id %>?_method=DELETE" method="POST" class="delete-form">
+								<button type="submit" class="btn btn-danger btn-small">Delete</button>
+							</form>
+						</div>
+					</article>
+				<% }) %>
+			</div>
+		<% } %>
+	</div>
+</section>
+
+<%- include('partials/footer') %>

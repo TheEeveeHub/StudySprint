@@ -1,0 +1,44 @@
+<%- include('partials/header', { title }) %>
+
+<section class="auth-layout">
+	<div class="card auth-card">
+		<h1>Create Your Account</h1>
+		<p class="muted">Start planning your study sessions with StudySprint.</p>
+
+		<% if (validationErrors && validationErrors.length > 0) { %>
+			<div class="error-list">
+				<% validationErrors.forEach((errorItem) => { %>
+					<p><%= errorItem.msg %></p>
+				<% }) %>
+			</div>
+		<% } %>
+
+		<form action="/register" method="POST" class="form-grid">
+			<label>
+				<span>Name</span>
+				<input type="text" name="name" value="<%= oldInput.name || '' %>" required>
+			</label>
+
+			<label>
+				<span>Email</span>
+				<input type="email" name="email" value="<%= oldInput.email || '' %>" required>
+			</label>
+
+			<label>
+				<span>Password</span>
+				<input type="password" name="password" required>
+			</label>
+
+			<label>
+				<span>Confirm Password</span>
+				<input type="password" name="confirmPassword" required>
+			</label>
+
+			<button type="submit" class="btn btn-full">Register</button>
+		</form>
+
+		<p class="switch-link">Already have an account? <a href="/login">Log in</a></p>
+	</div>
+</section>
+
+<%- include('partials/footer') %>

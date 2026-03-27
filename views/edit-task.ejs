@@ -1,0 +1,49 @@
+<%- include('partials/header', { title }) %>
+
+<section class="single-column">
+	<div class="card form-card">
+		<h1>Edit Task</h1>
+		<p class="muted">Update the task details below.</p>
+
+		<% const formErrors = typeof validationErrors !== 'undefined' ? validationErrors : []; %>
+		<% if (formErrors.length > 0) { %>
+			<div class="error-list">
+				<% formErrors.forEach((errorItem) => { %>
+					<p><%= errorItem.msg %></p>
+				<% }) %>
+			</div>
+		<% } %>
+
+		<form action="/tasks/<%= task.id %>?_method=PUT" method="POST" class="form-grid">
+			<label>
+				<span>Title</span>
+				<input type="text" name="title" value="<%= task.title %>" maxlength="100" required>
+			</label>
+
+			<label>
+				<span>Description</span>
+				<textarea name="description" rows="4" maxlength="500" required><%= task.description %></textarea>
+			</label>
+
+			<label>
+				<span>Due Date</span>
+				<input type="date" name="due_date" value="<%= task.due_date %>" required>
+			</label>
+
+			<label>
+				<span>Status</span>
+				<select name="status" required>
+					<option value="pending" <%= task.status === 'pending' ? 'selected' : '' %>>Pending</option>
+					<option value="completed" <%= task.status === 'completed' ? 'selected' : '' %>>Completed</option>
+				</select>
+			</label>
+
+			<div class="inline-actions">
+				<button type="submit" class="btn">Save Changes</button>
+				<a href="/dashboard" class="btn btn-secondary">Cancel</a>
+			</div>
+		</form>
+	</div>
+</section>
+
+<%- include('partials/footer') %>
